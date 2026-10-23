@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa thầy Phố - Ôn tập Hóa học Thực tiễn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50 border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-flask-vial text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">HÓA THẦY PHỐ</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Ôn tập Hóa học Thực tiễn (GDPT 2018)</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6">
+
+        <!-- MÀN HÌNH 1: ĐĂNG NHẬP THÔNG TIN HỌC SINH -->
+        <section id="loginScreen" class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 max-w-lg mx-auto mt-6">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-50 dark:bg-slate-700 text-brand-600 dark:text-brand-400 rounded-full text-2xl mb-3 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Xác nhận thông tin học sinh</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Vui lòng nhập đầy đủ họ tên và lớp trước khi làm bài kiểm tra.</p>
+            </div>
+            <form id="studentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Họ và tên học sinh:</label>
+                    <input type="text" id="studentName" required placeholder="Ví dụ: Nguyễn Văn A" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Lớp:</label>
+                    <input type="text" id="studentClass" required placeholder="Ví dụ: 12A1" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2">
+                    <span>Vào làm bài</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- MÀN HÌNH 2: CHỌN CHẾ ĐỘ & CHUYÊN ĐỀ -->
+        <section id="dashboardScreen" class="hidden space-y-6">
+            <!-- Thẻ chào mừng học sinh -->
+            <div class="bg-gradient-to-r from-brand-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">Học sinh</span>
+                    <h2 id="welcomeText" class="text-2xl font-bold mt-2">Xin chào!</h2>
+                    <p class="text-brand-50 text-sm mt-1">Hãy chọn chuyên đề ôn tập hoặc làm trọn bộ 50 câu hỏi thực tiễn.</p>
+                </div>
+                <button id="changeStudentBtn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium border border-white/20 transition">
+                    Đổi học sinh
+                </button>
+            </div>
+
+            <!-- Lưới chọn phần ôn tập -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div onclick="startQuiz('part1')" class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 cursor-pointer transition group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">1</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-brand-600 transition">Phần 1: Este - Lipid - Xà phòng</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Câu 1 - 10 (10 câu hỏi)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="startQuiz('part2')" class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 cursor-pointer transition group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">2</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-brand-600 transition">Phần 2: Carbohydrate</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Câu 11 - 20 (10 câu hỏi)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="startQuiz('part3')" class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 cursor-pointer transition group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">3</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-brand-600 transition">Phần 3: Amino acid, Protein & Polymer</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Câu 21 - 35 (15 câu hỏi)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="startQuiz('part4')" class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 cursor-pointer transition group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl font-bold group-hover:scale-110 transition">4</div>
+                        <div>
+                            <h3 class="font-bold text-lg group-hover:text-brand-600 transition">Phần 4: Kim loại & Đời sống</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Câu 36 - 50 (15 câu hỏi)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút thi tổng hợp 50 câu -->
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 class="text-xl font-bold">Ôn tập tổng hợp 50 câu hỏi thực tiễn</h3>
+                    <p class="text-slate-300 text-xs mt-1">Toàn bộ kiến thức Hóa học 12 thực tế đời sống chuẩn GDPT 2018.</p>
+                </div>
+                <button onclick="startQuiz('all')" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition whitespace-nowrap">
+                    Làm toàn bộ 50 câu
+                </button>
+            </div>
+        </section>
+
+        <!-- MÀN HÌNH 3: LÀM BÀI / TRẢ LỜI CÂU HỎI -->
+        <section id="quizScreen" class="hidden space-y-6">
+            <!-- Thanh thông tin bài làm -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center sticky top-16 z-40">
+                <div class="flex items-center space-x-3">
+                    <button onclick="backToDashboard()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 transition text-slate-600 dark:text-slate-300">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h3 id="quizTitle" class="font-bold text-sm md:text-base">Đang làm bài...</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" id="quizSubtitle">Chế độ tự kiểm tra có đáp án ngay</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="text-right">
+                        <span class="text-xs text-slate-500 block">Tiến độ</span>
+                        <span id="progressText" class="font-bold text-sm text-brand-600">0/0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách câu hỏi -->
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Nội dung câu hỏi được render bằng JS -->
+            </div>
+
+            <!-- Nút nộp bài -->
+            <div class="text-center pt-4 pb-12">
+                <button onclick="submitQuiz()" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition text-base flex items-center justify-center space-x-2 mx-auto">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Nộp bài & Xem kết quả</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- MÀN HÌNH 4: KẾT QUẢ BÀI LÀM -->
+        <section id="resultScreen" class="hidden space-y-6 max-w-lg mx-auto bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 text-center">
+            <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold mt-3">KẾT QUẢ BÀI LÀM</h2>
+                <p id="resultStudentInfo" class="text-sm text-slate-500 dark:text-slate-400 mt-1"></p>
+            </div>
+
+            <!-- Điểm số chính -->
+            <div class="py-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Điểm số quy đổi (Thang 10)</span>
+                <div id="scoreDisplay" class="text-5xl font-extrabold text-brand-600 my-1">10.0</div>
+                <p id="correctCountDisplay" class="text-sm text-slate-600 dark:text-slate-300 font-medium">Đúng 50/50 câu</p>
+            </div>
+
+            <div class="flex space-x-3 pt-2">
+                <button onclick="reviewAnswers()" class="flex-1 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold rounded-xl transition text-sm">
+                    Xem lại đáp án
+                </button>
+                <button onclick="backToDashboard()" class="flex-1 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                    Làm bài khác
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Xử lý Ứng Dụng -->
+    <script>
+        // --- 50 CÂU HỎI HÓA HỌC THỰC TIỄN (GDPT 2018) ---
+        const allQuestions = [
+            // PHẦN 1: Este - Lipid - Xà phòng (1-10)
+            { id: 1, part: 'part1', q: "Mùi thơm đặc trưng của quả chuối chín có chứa este nào sau đây?", options: ["Ethyl acetate", "Isoamyl acetate", "Benzyl acetate", "Methyl butyrate"], answer: 1, explanation: "Isoamyl acetate có mùi thơm đặc trưng của quả chuối chín." },
+            { id: 2, part: 'part1', q: "Khi bị kiến đốt, người ta thường bôi vôi tôi hoặc xà phòng vào vết đốt để giảm sưng đau vì xà phòng và vôi có tính chất gì?", options: ["Tính acid mạnh", "Tính base (kiềm) để trung hoà acid trong nọc kiến", "Tính oxi hóa mạnh", "Tính khử mạnh"], answer: 1, explanation: "Nọc kiến chứa acid gây ngứa, xà phòng hoặc vôi có tính base giúp trung hòa axit làm dịu vết đốt." },
+            { id: 3, part: 'part1', q: "Dầu mỡ động thực vật để lâu ngày ở điều kiện thường thường có mùi hôi khét (hiện tượng ôi thiu) là do nguyên nhân nào?", options: ["Do liên kết bội trong gốc axit béo không no bị oxi hóa bởi oxi không khí", "Do sự bay hơi của nước có trong dầu mỡ", "Do sự lên men lactic của đường", "Do tác dụng với hơi nước trong không khí"], answer: 0, explanation: "Hiện tượng ôi thiu mỡ là do gốc không no bị oxi hóa chậm bởi oxygen không khí tạo peroxide." },
+            { id: 4, part: 'part1', q: "Để sản xuất xà phòng, người ta đun nóng chất béo với dung dịch chất nào sau đây?", options: ["Sodium chloride (NaCl)", "Sodium hydroxide (NaOH)", "Hydrochloric acid (HCl)", "Calcium sulfate (CaSO4)"], answer: 1, explanation: "Xà phòng là muối sodium hoặc potassium của axit béo, được điều chế bằng cách đun chất béo với NaOH hoặc KOH." },
+            { id: 5, part: 'part1', q: "Trong công nghiệp, để biến chất béo lỏng (dầu thực vật) thành chất béo rắn (như bơ nhân tạo) để dễ vận chuyển và bảo quản, người ta thực hiện quá trình nào?", options: ["Thủy phân trong môi trường axit", "Hiđro hoá chất béo lỏng (cộng H2 vào gốc không no)", "Đề hiđro hoá", "Xà phòng hóa"], answer: 1, explanation: "Cộng hydrogen vào liên kết đôi của gốc axit béo chưa no biến chất béo lỏng thành chất béo rắn." },
+            { id: 6, part: 'part1', q: "Khi giặt quần áo dính vết máu hoặc vết lòng trắng trứng, không nên giặt bằng nước nóng vì nguyên nhân gì?", options: ["Làm vết bẩn tan ra và ngấm sâu hơn", "Làm protein bị đông tụ (chín), bám chặt vào sợi vải khó giặt sạch", "Làm vải bị co rút ngay lập tức", "Làm xà phòng mất tác dụng giặt rửa"], answer: 1, explanation: "Nhiệt độ cao làm protein (lòng trắng trứng, máu) đông tụ lại, bám chắc vào sợi vải." },
+            { id: 7, part: 'part1', q: "Chất nào sau đây là thành phần chính của xà phòng giặt dạng bánh truyền thống?", options: ["Muối sodium hoặc potassium của axit béo", "Muối sodium của axit alkylsulfonic", "Este của glycerol với axit béo", "Hydrocarbon mạch hở"], answer: 0, explanation: "Xà phòng là hỗn hợp muối sodium hoặc potassium của các axit béo." },
+            { id: 8, part: 'part1', q: "Tại sao xà phòng lại có khả năng giặt sạch vết dầu mỡ bám trên quần áo?", options: ["Vì xà phòng tác dụng hóa học làm phân hủy vết dầu mỡ thành khí bay đi", "Vì phân tử xà phòng có đầu ưa nước và đầu kỵ nước, giúp nhũ hóa vết dầu mỡ vào nước", "Vì xà phòng làm tăng nhiệt độ của nước", "Vì xà phòng làm bay hơi nước nhanh chóng"], answer: 1, explanation: "Đầu kỵ nước hòa tan vào dầu mỡ, đầu ưa nước hướng ra phía nước giúp cuốn trôi vết bẩn." },
+            { id: 9, part: 'part1', q: "Khi đun nấu thức ăn chứa nhiều dầu mỡ, nếu không may bị bén lửa bốc cháy, cách xử lý hiệu quả nhất là gì?", options: ["Dùng quạt nan quạt mạnh để thổi tắt lửa", "Dùng chăn dày, ẩm trùm kín hoặc dùng bình cứu hỏa chuyên dụng, tuyệt đối không hất nước vào", "Hất thật nhiều nước lạnh vào chảo dầu đang cháy", "Dùng tay hất chảo dầu ra chỗ trống"], answer: 1, explanation: "Trùm chăn ẩm cắt nguồn oxygen hoặc dùng bình chữa cháy, tránh hất nước làm dầu bắn lan rộng." },
+            { id: 10, part: 'part1', q: "Khi cho mỡ ăn thừa xuống đường ống thoát nước rửa bát lâu ngày thường gây tắc nghẽn. Nguyên nhân chính là gì?", options: ["Mỡ phản ứng với nước tạo ra axit làm hỏng ống", "Mỡ ở dạng lỏng đóng cục lại khi nguội và bám dính vào thành ống kết hợp với cặn bẩn", "Mỡ bay hơi làmtắc đường ống", "Mỡ hút nước nở ra gấp nhiều lần"], answer: 1, explanation: "Mỡ nóng chảy trôi xuống, gặp lạnh đông đặc lại và bám dính gây nghẹt đường ống." },
+
+            // PHẦN 2: Carbohydrate (11-20)
+            { id: 11, part: 'part2', q: "Trong y tế, khi bệnh nhân bị suy nhược cơ thể, mất sức hoặc không thể ăn uống được, bác sĩ thường truyền dịch dung dịch nào để bồi bổ nhanh chóng?", options: ["Dung dịch NaCl 0,9%", "Dung dịch đường glucose 5%", "Dung dịch cồn y tế", "Dung dịch nước mắm pha loãng"], answer: 1, explanation: "Glucose là đường đơn hấp thụ trực tiếp vào máu cung cấp năng lượng nhanh chóng cho cơ thể." },
+            { id: 12, part: 'part2', q: "Khi nhai kỹ cơm hoặc bánh mì trong miệng lâu sẽ thấy có vị ngọt nhẹ. Quá trình này xảy ra nhờ enzim nào trong nước bọt?", options: ["Enzim amylase thủy phân tinh bột thành đường maltose", "Enzim cellulase", "Enzim lên men rượu", "Enzim xúc tác phản ứng xà phòng hóa"], answer: 0, explanation: "Amylase trong nước bọt thủy phân một phần tinh bột thành đường maltose có vị ngọt." },
+            { id: 13, part: 'part2', q: "Phản ứng hóa học nào dùng để sản xuất gương soi hoặc ruột phích nước trong công nghiệp?", options: ["Phản ứng tráng bạc của glucose", "Phản ứng lên men rượu của glucose", "Phản ứng thủy phân tinh bột", "Phản ứng cháy của glucose"], answer: 0, explanation: "Glucose có nhóm -CHO tham gia phản ứng tráng bạc tạo lớp bạc sáng bóng." },
+            { id: 14, part: 'part2', q: "Nguyên liệu chính dùng để sản xuất giấy viết, giấy in trong công nghiệp là chất nào?", options: ["Tinh bột gạo", "Cellulose (có nhiều trong gỗ, tre, nứa, bông)", "Saccarose", "Đường mía"], answer: 1, explanation: "Cellulose là thành phần chính cấu tạo nên tế bào thực vật, dùng làm gỗ giấy." },
+            { id: 15, part: 'part2', q: "Khi làm rượu vang hoặc bia, người ta cho men vào dịch quả chín hoặc ngũ cốc để thực hiện quá trình nào?", options: ["Lên men lactic", "Lên men rượu từ đường glucose", "Quá trình quang hợp", "Quá trình xà phòng hóa chất béo"], answer: 1, explanation: "Quá trình lên men ethanol từ đường dưới tác dụng của men sinh học." },
+            { id: 16, part: 'part2', q: "Cây xanh hấp thụ khí carbon dioxide và nước dưới ánh sáng mặt trời để sinh ra khí oxygen và tổng hợp nên chất nào đầu tiên?", options: ["Cellulose", "Tinh bột (Glucose)", "Protein", "Chất béo"], answer: 1, explanation: "Quá trình quang hợp của cây xanh tạo ra glucose và giải phóng oxygen." },
+            { id: 17, part: 'part2', q: "Nước đường pha chanh khi để qua đêm ở nhiệt độ phòng thường có hiện tượng sủi bọt khí và có vị chua nhẹ là do nguyên nhân gì?", options: ["Đường bị bay hơi thành khí", "Đường bị vi khuẩn và nấm men lên men chuyển hóa thành rượu và axit acetic", "Chanh phản ứng với đường tạo ra khí carbon dioxide", "Đường bị oxi hóa chậm bởi không khí"], answer: 1, explanation: "Vi sinh vật lên men đường thành acid và khí CO2." },
+            { id: 18, part: 'part2', q: "Sợi bông (cotton) thiên nhiên dùng để dệt vải may mặc có thành phần chính là chất nào?", options: ["Tinh bột", "Cellulose", "Protein", "Polyethylene"], answer: 1, explanation: "Sợi bông chứa gần như nguyên chất cellulose." },
+            { id: 19, part: 'part2', q: "Khi nhỏ vài giọt dung dịch iodine (iod) vào mặt cắt của củ khoai lang hoặc quả chuối xanh sẽ xuất hiện hiện tượng gì?", options: ["Chuyển sang màu xanh tím", "Chuyển sang màu đỏ máu", "Không có hiện tượng gì", "Sủi bọt khí màu vàng"], answer: 0, explanation: "Tinh bột tác dụng với iodine tạo phức chất có màu xanh tím đặc trưng." },
+            { id: 20, part: 'part2', q: "Đường kính dùng trong ăn uống hằng ngày (đường mía, đường phèn) có thành phần chính là chất nào?", options: ["Glucose", "Fructose", "Saccarose", "Maltose"], answer: 2, explanation: "Đường mía có thành phần chính là disaccharide saccarose." },
+
+            // PHẦN 3: Amino acid, Protein & Polymer (21-35)
+            { id: 21, part: 'part3', q: "Chất nào sau đây là thành phần chính tạo nên vị ngọt của mì chính (bột ngọt)?", options: ["Sodium glutamate (muối của axit glutamic)", "Sodium chloride", "Acetic acid", "Glucose"], answer: 0, explanation: "Bột ngọt (mì chính) là monosodium glutamate." },
+            { id: 22, part: 'part3', q: "Lòng trắng trứng khi luộc chín bị đông đặc lại. Hiện tượng này được gọi là gì?", options: ["Sự thủy phân protein", "Sự đông tụ protein bởi nhiệt độ", "Sự lên men protein", "Phản ứng màu biuret"], answer: 1, explanation: "Nhiệt độ cao làm protein bị đông tụ lại (biến tính)." },
+            { id: 23, part: 'part3', q: "Tóc, móng tay, da và cơ bắp của con người có cấu tạo chủ yếu từ chất nào?", options: ["Lipid", "Protein", "Cellulose", "Tinh bột"], answer: 1, explanation: "Protein là vật liệu cấu trúc nền tảng của cơ thể sống." },
+            { id: 24, part: 'part3', q: "Loại tơ nào sau đây thuộc loại tơ nhân tạo (bán tổng hợp) chế biến từ cellulose?", options: ["Tơ tằm", "Tơ visco và tơ axetat", "Tơ nilon-6,6", "Tơ capron"], answer: 1, explanation: "Tơ visco và tơ axetat điều chế từ cellulose tự nhiên qua quá trình hóa học." },
+            { id: 25, part: 'part3', q: "Chất dẻo PE (Polyethylene) dùng làm túi nilon, màng bọc thực phẩm được tổng hợp từ monomer nào?", options: ["Ethylene (CH2=CH2)", "Propylene", "Vinyl chloride", "Styrene"], answer: 0, explanation: "Trùng hợp ethylene thu được nhựa PE." },
+            { id: 26, part: 'part3', q: "Khi đốt cháy các đồ vật làm bằng nhựa PVC (polyvinyl chloride), người ta thấy có khí độc thoát ra gây ô nhiễm môi trường. Khí đó là khí gì?", options: ["Khí chlorine (Cl2) hoặc khí hydrogen chloride (HCl)", "Khí carbon monoxide (CO)", "Khí ammonia (NH3)", "Khí sulfur dioxide (SO2)"], answer: 0, explanation: "Nhựa PVC chứa gốc chloride nên khi cháy sinh ra khí HCl độc hại." },
+            { id: 27, part: 'part3', q: "Cao su thiên nhiên có tính đàn hồi cao, không thấm nước và cách điện tốt. Monomer cấu tạo nên cao su thiên nhiên là chất nào?", options: ["Isoprene (2-methylbuta-1,3-diene)", "Buta-1,3-diene", "Ethylene", "Styrene"], answer: 0, explanation: "Cao su thiên nhiên là polymer của isoprene." },
+            { id: 28, part: 'part3', q: "Để bảo vệ đồ vật bằng sắt không bị gỉ sét khi để ngoài trời, người ta thường dùng phương pháp nào phổ biến nhất?", options: ["Nhúng vào dung dịch axit mạnh", "Sơn phủ bề mặt hoặc mạ kim loại khác lên trên", "Đun nóng liên tục ở nhiệt độ cao", "Ngâm trong nước muối đặc"], answer: 1, explanation: "Sơn hoặc mạ cách ly sắt với oxygen và độ ẩm không khí." },
+            { id: 29, part: 'part3', q: "Tên gọi của loại tơ tổng hợp thường dùng để dệt bít tất (vớ), may quần áo ấm, vải lót là tơ gì?", options: ["Tơ nilon-6,6", "Tơ tằm tự nhiên", "Sợi bông", "Tơ visco"], answer: 0, explanation: "Tơ nilon-6,6 dai, bền, ít thấm nước, hay dùng dệt bít tất." },
+            { id: 30, part: 'part3', q: "Xốp dùng để làm thùng đựng đá, hộp đựng thức ăn nhanh (nhựa polystyrene) được tổng hợp từ chất nào?", options: ["Styrene", "Ethylene", "Vinyl acetate", "Acrylonitrile"], answer: 0, explanation: "Trùng hợp styrene thu được nhựa PS (polystyrene)." },
+            { id: 31, part: 'part3', q: "Keo dán 502 (cyanoacrylate) có đặc tính dán dính rất nhanh. Khi sử dụng cần cẩn thận để tránh dính vào tay vì nguyên nhân gì?", options: ["Keo sinh nhiệt mạnh và phản ứng nhanh với độ ẩm trên da làm bỏng rát, dính chặt da", "Keo có tính axit ăn mòn da tay ngay lập tức", "Keo có độc tính gây ngất xỉu", "Keo làm lạnh cóng da tay"], answer: 0, explanation: "Keo 502 phản ứng cực nhanh với hơi ẩm trên da và tỏa nhiệt mạnh gây dính bỏng." },
+            { id: 32, part: 'part3', q: "Tại sao các nồi nấu ăn thường làm bằng nhôm hoặc inox mà ít khi làm bằng đồng nguyên chất dù đồng dẫn điện, dẫn nhiệt tốt?", options: ["Nhôm nhẹ, rẻ, bền và tạo lớp màng oxit bảo vệ tốt; đồng nặng, đắt và dễ bị gỉ xanh độc hại khi tiếp xúc thực phẩm chua", "Đồng không chịu được nhiệt độ cao", "Nhôm cứng hơn thép rất nhiều", "Nhôm phản ứng tạo mùi thơm cho thức ăn"], answer: 0, explanation: "Đồng tạo hợp chất độc (gỉ đồng/patina) khi gặp thức ăn chua, nhôm an toàn và kinh tế hơn." },
+            { id: 33, part: 'part3', q: "Chai nhựa đựng nước suối dùng một lần thường làm bằng loại nhựa nào có ký hiệu tái chế PET?", options: ["Polyethylene terephthalate", "Polyvinyl chloride", "Polystyrene", "Polypropylene"], answer: 0, explanation: "Nhựa PET (Polyethylene terephthalate) chuyên dùng làm chai lọ đựng nước." },
+            { id: 34, part: 'part3', q: "Vết mực bút bi dính trên áo trắng có thể được tẩy sạch hiệu quả bằng dung môi nào sau đây?", options: ["Nước lạnh thông thường", "Cồn y tế (ethanol) hoặc acetone", "Nước muối loãng", "Giấm ăn"], answer: 1, explanation: "Cồn hoặc acetone hòa tan tốt mực bút bi." },
+            { id: 35, part: 'part3', q: "Khi bị bỏng nhẹ do axit đậm đặc văng vào da, việc sơ cứu đầu tiên và quan trọng nhất là gì?", options: ["Bôi thuốc mỡ ngay lập tức", "Rửa ngay bằng vòi nước sạch thật nhiều lần để làm loãng và trôi axit, sau đó đưa đến cơ sở y tế", "Đắp lá thuốc dân gian lên vết bỏng", "Rửa bằng dung dịch kiềm đặc để trung hòa"], answer: 1, explanation: "Xối nước sạch liên tục để giảm nồng độ axit và làm dịu vết bỏng." },
+
+            // PHẦN 4: Kim loại & Đời sống (36-50)
+            { id: 36, part: 'part4', q: "Kim loại nào sau đây nhẹ nhất (khối lượng riêng nhỏ nhất) trong tất cả các kim loại?", options: ["Sắt (Fe)", "Nhôm (Al)", "Liti (Li)", "Đồng (Cu)"], answer: 2, explanation: "Lithium (Li) là kim loại có khối lượng riêng nhỏ nhất ($0,53\text{ g/cm}^3$)." },
+            { id: 37, part: 'part4', q: "Nước cứng là nguồn nước có chứa hàm lượng cao các ion nào sau đây?", options: ["Na+ và K+", "Ca2+ và Mg2+", "Fe2+ và Fe3+", "Cl- và SO42-"], answer: 1, explanation: "Nước cứng chứa nhiều ion $Ca^{2+}$ và $Mg^{2+}$." },
+            { id: 38, part: 'part4', q: "Tác hại nào sau đây KHÔNG phải do nước cứng gây ra trong đời sống?", options: ["Làm quần áo giặt bằng xà phòng lâu sạch, tốn xà phòng, nhanh mục vải", "Làm giảm hương vị và độ nhừ của thực phẩm khi đun nấu", "Gây đóng cặn nồi hơi, ống dẫn nước nóng gây nguy cơ nổ bình áp suất", "Gây ngộ độc thực phẩm ngay lập tức khi uống trực tiếp"], answer: 3, explanation: "Nước cứng có hại cho thiết bị và sinh hoạt nhưng không gây ngộ độc cấp tính ngay khi uống." },
+            { id: 39, part: 'part4', q: "Để làm mềm nước cứng tạm thời trong sinh hoạt (nước chứa ion $HCO_3^-$), người ta thường dùng phương pháp nào đơn giản nhất?", options: ["Đun sôi nước trước khi sử dụng", "Cho thêm nước muối ăn", "Lọc qua vải sạch nhiều lần", "Phơi dưới ánh nắng mặt trời"], answer: 0, explanation: "Đun sôi làm kết tủa ion $Ca^{2+}, Mg^{2+}$ dạng muối carbonate." },
+            { id: 40, part: 'part4', q: "Hợp kim của sắt chứa từ 2% đến 4% carbon được gọi là vật liệu gì?", options: ["Thép", "Gang trắng hoặc gang xám", "Inox không gỉ", "Đồng thau"], answer: 1, explanation: "Gang là hợp kim Fe-C với hàm lượng carbon từ 2% - 4%." },
+            { id: 41, part: 'part4', q: "Inox (thép không gỉ) dùng làm dao kéo, dụng cụ y tế và thiết bị nhà bếp là hợp kim của sắt với nguyên tố nào chủ yếu để không bị gỉ sét?", options: ["Crom (Cr) và Nickel (Ni)", "Kẽm (Zn)", "Chì (Pb)", "Nhôm (Al)"], answer: 0, explanation: "Inox chứa crom tạo màng oxit bảo vệ bề mặt thép không bị ăn mòn." },
+            { id: 42, part: 'part4', q: "Hiện tượng sắt để ngoài không khí ẩm lâu ngày bị gỉ sét màu nâu đỏ là ví dụ thực tế của quá trình nào?", options: ["Ăn mòn hóa học và ăn mòn điện hóa", "Quá trình quang hợp", "Quá trình nhiệt luyện", "Quá trình mạ điện"], answer: 0, explanation: "Gỉ sắt hình thành qua cơ chế ăn mòn điện hóa trong không khí ẩm." },
+            { id: 43, part: 'part4', q: "Để bảo vệ vỏ tàu biển bằng thép ở phần chìm dưới nước biển khỏi bị ăn mòn, người ta thường gắn các tấm kim loại nào vào vỏ tàu?", options: ["Tấm kẽm (Zn) hoặc magnesium (Mg)", "Tấm đồng (Cu)", "Tấm vàng (Au)", "Tấm chì (Pb)"], answer: 0, explanation: "Dùng kim loại mạnh hơn sắt (Zn, Mg) làm vật hy sinh bảo vệ vỏ tàu." },
+            { id: 44, part: 'part4', q: "Phân bón hóa học nào sau đây cung cấp nguyên tố dinh dưỡng đạm (N) cho cây trồng có hàm lượng đạm cao nhất?", options: ["Amophosphate", "Urê (NH2)2CO", "Ammonium sulfate (NH4)2SO4", "Sodium nitrate"], answer: 1, explanation: "Urê có hàm lượng nguyên tố N cao nhất trong các loại phân đạm thông thường (~46%)." },
+            { id: 45, part: 'part4', q: "Khi bón phân đạm amoni cho đất chua, người ta thường khuyên không nên trộn chung với chất nào sau đây để tránh làm mất tác dụng của phân?", options: ["Tro bếp (có chứa K2CO3 làm kiềm)", "Nước sạch", "Cát mịn", "Phân chuồng hoai mục"], answer: 0, explanation: "Tro bếp có tính kiềm sẽ tác dụng với muối amoni giải phóng khí ammonia làm thất thoát đạm." },
+            { id: 46, part: 'part4', q: "Kim loại nào sau đây được dùng làm dây dẫn điện cao thế phổ biến vì nhẹ, dẫn điện tốt và rẻ hơn đồng?", options: ["Bạc (Ag)", "Đồng (Cu)", "Nhôm (Al)", "Sắt (Fe)"], answer: 2, explanation: "Nhôm nhẹ và có độ dẫn điện tốt, kinh tế cho đường dây tải điện trên cao." },
+            { id: 47, part: 'part4', q: "Vàng trang sức bày bán trên thị trường thường không phải là vàng nguyên chất 99,99% mà thường là vàng 18K hoặc 14K được pha thêm kim loại nào để tăng độ cứng và giảm giá thành?", options: ["Đồng và bạc (Cu, Ag)", "Sắt và chì (Fe, Pb)", "Thủy ngân (Hg)", "Natri và kali (Na, K)"], answer: 0, explanation: "Vàng nguyên chất quá mềm, nên được pha thêm Ag và Cu để tăng độ cứng làm trang sức." },
+            { id: 48, part: 'part4', q: "Bình acquy axit - chì dùng trong xe máy, ô tô sử dụng dung dịch axit nào làm chất điện ly?", options: ["Dung dịch Hydrochloric acid (HCl)", "Dung dịch Sulfuric acid (H2SO4) loãng", "Dung dịch Nitric acid (HNO3)", "Dung dịch Sodium hydroxide (NaOH)"], answer: 1, explanation: "Acquy axit dùng dung dịch $H_2SO_4$ loãng." },
+            { id: 49, part: 'part4', q: "Hiện tượng mưa axit (chứa các axit như $H_2SO_4, HNO_3$) do khói thải công nghiệp gây ra tác hại nghiêm trọng nào sau đây?", options: ["Làm ăn mòn các công trình kiến trúc bằng đá vôi, kim loại và hủy diệt cây trồng, thủy sinh", "Làm nước biển ngọt hóa hoàn toàn", "Làm tăng nhiệt độ Trái Đất lên 10 độ C ngay lập tức", "Làm mất tầng ozone bảo vệ Trái Đất"], answer: 0, explanation: "Mưa axit ăn mòn tượng đá, công trình xây dựng và hủy diệt hệ sinh thái." },
+            { id: 50, part: 'part4', q: "Khi hàn cắt kim loại bằng ngọn lửa oxi - acetylen, khí acetylen cháy tỏa ra nhiệt lượng rất lớn. Công thức hóa học của khí acetylen là gì?", options: ["CH4", "C2H2", "C2H4", "C6H6"], answer: 1, explanation: "Acetylen có công thức phân tử là $C_2H_2$." }
+        ];
+
+        let currentStudent = { name: '', className: '' };
+        let activeQuestions = [];
+        let userAnswers = {}; // Lưu đáp án học sinh chọn: { questionIndex: optionIndex }
+
+        // --- QUẢN LÝ GIAO DIỆN & TRẠNG THÁI ---
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultScreen = document.getElementById('resultScreen');
+
+        // Dark mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Đăng nhập học sinh
+        document.getElementById('studentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const className = document.getElementById('studentClass').value.trim();
+            if(!name || !className) return;
+
+            currentStudent = { name, className };
+            document.getElementById('welcomeText').textContent = `Chào em, ${name} (${className})!`;
+            
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+        });
+
+        document.getElementById('changeStudentBtn').addEventListener('click', () => {
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+        });
+
+        function backToDashboard() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+        }
+
+        // --- BẮT ĐẦU BÀI LÀM ---
+        function startQuiz(type) {
+            if(type === 'all') {
+                activeQuestions = [...allQuestions];
+                document.getElementById('quizTitle').textContent = "Ôn tập tổng hợp 50 câu hỏi thực tiễn";
+            } else {
+                activeQuestions = allQuestions.filter(q => q.part === type);
+                const partNames = { 'part1': 'Este - Lipid - Xà phòng', 'part2': 'Carbohydrate', 'part3': 'Amino acid, Protein & Polymer', 'part4': 'Kim loại & Đời sống' };
+                document.getElementById('quizTitle').textContent = `Chuyên đề: ${partNames[type]}`;
+            }
+
+            userAnswers = {};
+            document.getElementById('quizSubtitle').textContent = `Học sinh: ${currentStudent.name} - Lớp: ${currentStudent.className} (${activeQuestions.length} câu)`;
+            document.getElementById('progressText').textContent = `0/${activeQuestions.length}`;
+
+            renderQuestions();
+            dashboardScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- RENDER CÂU HỎI ---
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            activeQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all";
+                card.id = `q_card_${index}`;
+
+                let optionsHtml = '';
+                q.options.forEach((opt, optIdx) => {
+                    optionsHtml += `
+                        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition option-label-${index}-${optIdx}">
+                            <input type="radio" name="question_${index}" value="${optIdx}" onchange="selectAnswer(${index}, ${optIdx})" class="mt-1 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                            <span class="text-sm font-medium leading-relaxed">${String.fromCharCode(65 + optIdx)}. ${opt}</span>
+                        </label>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <span class="bg-brand-50 dark:bg-slate-700 text-brand-600 dark:text-brand-300 text-xs px-2.5 py-1 rounded-lg font-bold">Câu ${index + 1}</span>
+                    </div>
+                    <p class="font-semibold text-base mb-4 leading-relaxed">${q.q}</p>
+                    <div class="space-y-2" id="options_wrap_${index}">
+                        ${optionsHtml}
+                    </div>
+                    <div id="feedback_${index}" class="hidden mt-4 p-4 rounded-xl text-sm"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- CHỌN ĐÁP ÁN & HIỆN KẾT QUẢ NGAY LẬP TỨC ---
+        window.selectAnswer = function(qIndex, optIdx) {
+            userAnswers[qIndex] = optIdx;
+
+            // Đếm số câu đã làm
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('progressText').textContent = `${answeredCount}/${activeQuestions.length}`;
+
+            const q = activeQuestions[qIndex];
+            const feedbackEl = document.getElementById(`feedback_${qIndex}`);
+            feedbackEl.classList.remove('hidden');
+
+            // Tô màu đúng sai ngay lập tức cho các option
+            const optionsWrap = document.getElementById(`options_wrap_${qIndex}`);
+            const labels = optionsWrap.querySelectorAll('label');
+            
+            labels.forEach((label, idx) => {
+                label.classList.remove('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'dark:bg-emerald-950/40', 'dark:text-emerald-200', 'bg-rose-50', 'border-rose-500', 'text-rose-900', 'dark:bg-rose-950/40', 'dark:text-rose-200');
+                if (idx === q.answer) {
+                    label.classList.add('bg-emerald-50', 'border-emerald-500', 'dark:bg-emerald-950/40');
+                } else if (idx === optIdx && optIdx !== q.answer) {
+                    label.classList.add('bg-rose-50', 'border-rose-500', 'dark:bg-rose-950/40');
+                }
+            });
+
+            if(optIdx === q.answer) {
+                feedbackEl.className = "mt-4 p-4 rounded-xl text-sm bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 flex items-start space-x-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i><div><strong class="font-bold">Chính xác!</strong> ${q.explanation}</div>`;
+            } else {
+                feedbackEl.className = "mt-4 p-4 rounded-xl text-sm bg-rose-50 dark:bg-rose-950/50 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800 flex items-start space-x-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mt-0.5"></i><div><strong class="font-bold">Chưa chính xác.</strong> Đáp án đúng là <span class="font-bold underline">${String.fromCharCode(65 + q.answer)}</span>. ${q.explanation}</div>`;
+            }
+        };
+
+        // --- NỘP BÀI & TÍNH ĐIỂM ---
+        window.submitQuiz = function() {
+            let correctCount = 0;
+            activeQuestions.forEach((q, index) => {
+                if(userAnswers[index] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const score = ((correctCount / activeQuestions.length) * 10).toFixed(1);
+
+            document.getElementById('resultStudentInfo').textContent = `${currentStudent.name} - Lớp ${currentStudent.className}`;
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('correctCountDisplay').textContent = `Đúng ${correctCount}/${activeQuestions.length} câu`;
+
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.reviewAnswers = function() {
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    </script>
+</body>
+</html>
